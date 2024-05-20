@@ -1,0 +1,43 @@
+import numpy  as np
+
+# f = w * x (predictor function)
+# f = 2 * x (create artficial training data for func to est.)
+X = np.array([1, 2, 3, 4], dtype=np.float32)
+Y = np.array([2, 4, 6, 8], dtype=np.float32)
+
+w = 0.0
+
+# Model prediction 
+def forward(X):
+    return w * X 
+# Loss 
+def loss(Y, Y_pred):
+    return ((Y_pred - Y)**2).mean()
+# Calculate gradient 
+# MSE = J=  1/ N * (w*x - y)**2
+# dj/dW = 1/N * 2* (wx -y) * x
+def gradient(X, Y, Y_pred):
+    return np.dot(2 * X, Y_pred - Y).mean()
+
+print (f"Prediction before training {forward(5)}")
+
+num_iters = 10
+learning_rate = 0.01
+
+for epoch in range(0, num_iters):
+    # Prediction = forward pass 
+    Y_pred = forward(X)
+    # Loss
+    l = loss(Y, Y_pred)
+    # Gradients 
+    dw = gradient(X, Y, Y_pred)
+    # Weights 
+    w-= learning_rate * dw
+
+    if epoch % 1 == 0:
+        print (f"Epoch {epoch+1}: w= {w:.3f}, loss = {l:.8f}")
+
+print (f"Prediction after training {forward(5)}")
+
+
+
