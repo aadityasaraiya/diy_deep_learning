@@ -31,18 +31,30 @@ class WineDataset(Dataset):
     def __len__(self):
         return self.num_samples
 
-dataset = WineDataset()
+def collate_fn(batch):
+    # Batch is a list of tuples (input, label)
+    inputs = torch.stack([item[0] for item in batch])
+    labels = torch.stack([item[1] for item in batch])
+    return inputs, labels
 
-batch_size = 4
-dataloader = DataLoader(dataset=dataset, batch_size=batch_size, shuffle=True)
 
-num_epochs = 2
-total_samples = len(dataset)
-num_iters = math.ceil(total_samples / batch_size)
+if __name__ == '__main__':
+    dataset = WineDataset()
 
-print (total_samples, num_iters)
+    batch_size = 4
+    dataloader = DataLoader(dataset=dataset, 
+                            batch_size=batch_size, 
+                            shuffle=True, 
+                            num_workers=1,
+                            collate_fn=collate_fn)
 
-for epoch in range(num_epochs):
-    for i, (inputs, labels) in enumerate(dataloader):
-        # Forward, backward, update
-        print (f"epoch {epoch + 1 / num_epochs}, step {i + 1}/ {num_iters}, inputs {inputs.shape}")
+    num_epochs = 2
+    total_samples = len(dataset)
+    num_iters = math.ceil(total_samples / batch_size)
+
+    print (total_samples, num_iters)
+
+    for epoch in range(num_epochs):
+        for i, (inputs, labels) in enumerate(dataloader):
+            # Forward, backward, update
+            print (f"epoch {epoch + 1 / num_epochs}, step {i + 1}/ {num_iters}, inputs {inputs.shape}")
